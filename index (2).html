@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderno de Campo — Gestão de Atividades Científicas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=Patrick+Hand+SC&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#332c22;
+    --ink-soft:#5b5240;
+    --paper:#ffffff;
+    --paper-raised:#ffffff;
+    --line:#cdb98d;
+    --rule:#a9c3de;
+    --margin:#bb4f49;
+    --accent:#25456f;
+    --accent-dark:#162d4c;
+    --ochre:#b3822c;
+    --overdue:#a83b34;
+    --shadow-ink: rgba(60,42,20,0.28);
+    --wood-1:#ecd8b3;
+    --wood-2:#ddc094;
+    --wood-3:#cca875;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    color:var(--ink);
+    font-family:'Patrick Hand', cursive;
+    min-height:100vh;
+    background-color: var(--wood-2);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='340'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.010 0.32' numOctaves='4' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.62 0 0 0 0 0.47 0 0 0 0 0.3 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(180deg, rgba(255,255,255,0.10) 0px, rgba(255,255,255,0.10) 1px, transparent 1px, transparent 4px),
+      linear-gradient(175deg, var(--wood-1) 0%, var(--wood-2) 55%, var(--wood-3) 100%);
+    background-repeat: repeat, repeat, no-repeat;
+    background-size: 340px 340px, auto, cover;
+    background-blend-mode: soft-light, normal, normal;
+  }
+  ::selection{ background: var(--ochre); color: var(--paper); }
+
+  header{
+    margin: 26px 30px 6px;
+    padding: 18px 26px 22px;
+    background: var(--paper-raised);
+    border-radius: 3px 8px 4px 9px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 2px 10px 22px var(--shadow-ink);
+    transform: rotate(-0.6deg);
+    position: relative;
+    display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  }
+  header::before, header::after{
+    content:''; position:absolute; top:-11px; width:70px; height:26px;
+    background: rgba(230,222,190,0.55);
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+  }
+  header::before{ left:36px; transform: rotate(-8deg); }
+  header::after{ right:54px; transform: rotate(6deg); }
+
+  .brand h1{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: 40px;
+    margin:0 0 2px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .brand p{
+    margin:0; color:var(--ink-soft); font-size:16px; max-width:54ch; line-height:1.4;
+    font-family:'Patrick Hand', cursive;
+  }
+  .brand .field-no{
+    display:inline-block;
+    font-family:'Patrick Hand SC', cursive;
+    font-size:12px; color: var(--accent);
+    border: 1.5px solid var(--accent);
+    padding: 1px 8px;
+    border-radius: 2px;
+    transform: rotate(-3deg);
+    margin-bottom: 6px;
+    letter-spacing:.03em;
+  }
+  .header-actions{ display:flex; gap:10px; align-items:center; }
+  button{
+    font-family:'Patrick Hand', cursive;
+    cursor:pointer; border:none;
+  }
+  .btn-primary{
+    background: var(--accent); color: var(--paper);
+    padding:8px 18px; border-radius: 3px 7px 3px 7px;
+    font-size:16px;
+    box-shadow: 2px 3px 0 rgba(0,0,0,0.15);
+    transition: transform .1s ease, box-shadow .1s ease;
+    transform: rotate(-0.5deg);
+  }
+  .btn-primary:hover{ background: var(--accent-dark); }
+  .btn-primary:active{ transform: translateY(1px) rotate(-0.5deg); box-shadow: 1px 2px 0 rgba(0,0,0,0.15); }
+  .btn-ghost{
+    background: transparent; color: var(--ink-soft);
+    border:1.5px dashed var(--line);
+    padding:7px 14px; border-radius:3px; font-size:15.5px;
+  }
+  .btn-ghost:hover{ border-color: var(--accent); color: var(--accent); }
+
+  .stats-bar{
+    display:flex; gap:22px; align-items:center; padding: 10px 40px 16px;
+    font-family:'Patrick Hand', cursive; font-size:15px; color: var(--paper);
+    flex-wrap:wrap; text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  }
+  .stats-bar span{ display:flex; align-items:center; gap:5px; }
+  .stats-bar span + span{ border-left: 1.5px solid rgba(255,255,255,0.4); padding-left:22px; }
+  .stats-bar span b{ font-size:17px; }
+  .stats-bar .flag{ color: #ffd7d2; }
+  .stats-bar .flag b{ color:#fff; }
+
+  main{
+    padding: 10px 26px 60px;
+    overflow-x:auto;
+  }
+  .board{
+    display:flex; gap:30px; align-items:flex-start;
+    min-height: 60vh;
+  }
+  .column{
+    background: transparent;
+    border: none;
+    width: 290px; flex: 0 0 290px;
+    display:flex; flex-direction:column;
+    max-height: calc(100vh - 230px);
+  }
+  .column.drag-over .card-list{ background: rgba(255,255,255,0.06); border-radius: 6px; }
+  .column-head{
+    padding: 4px 8px 12px 20px;
+    position: relative;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
+  }
+  .column-head::before{
+    content:''; position:absolute; left:2px; top:2px; width:11px; height:11px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #f6d9d4, var(--margin) 65%, #7c2f2b 100%);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.4);
+  }
+  .column-head h2{
+    font-family:'Caveat', cursive; font-size:25px; font-weight:600; margin:0;
+    color: var(--paper); text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    outline: none;
+  }
+  .column-count{
+    font-family:'Patrick Hand', cursive; font-size:14px; color: rgba(255,255,255,0.75);
+  }
+  .column-count::before{ content:'('; }
+  .column-count::after{ content:')'; }
+  .column-del{
+    background:none; color: rgba(255,255,255,0.55); font-size:16px; line-height:1; padding:2px 4px;
+  }
+  .column-del:hover{ color:#ffd7d2; }
+
+  .card-list{
+    padding: 6px 8px 14px; display:flex; flex-direction:column; gap:16px;
+    overflow-y:auto; overflow-x:hidden; flex:1;
+  }
+  .card{
+    background: var(--paper);
+    background-image: repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, var(--rule) 28px, var(--paper) 29px);
+    background-position: 0 6px;
+    padding: 12px 13px 10px 30px;
+    box-shadow: 2px 4px 3px rgba(35,22,8,0.14), 4px 10px 16px var(--shadow-ink);
+    cursor: grab;
+    transition: transform .14s ease, box-shadow .14s ease;
+    position: relative;
+  }
+  .card::before{
+    content:''; position:absolute; left:20px; top:0; bottom:0; width:1.5px; background: var(--margin);
+  }
+  .card-list .card:nth-of-type(6n+1){ transform: rotate(-1.4deg); border-radius: 2px 9px 3px 7px; }
+  .card-list .card:nth-of-type(6n+2){ transform: rotate(1deg);    border-radius: 8px 2px 7px 3px; }
+  .card-list .card:nth-of-type(6n+3){ transform: rotate(-0.4deg); border-radius: 4px 6px 2px 8px; margin-left:8px; }
+  .card-list .card:nth-of-type(6n+4){ transform: rotate(1.6deg);  border-radius: 6px 3px 8px 2px; }
+  .card-list .card:nth-of-type(6n+5){ transform: rotate(-0.9deg); border-radius: 3px 7px 4px 6px; margin-left:4px; }
+  .card-list .card:nth-of-type(6n+6){ transform: rotate(0.6deg);  border-radius: 7px 4px 2px 9px; }
+  .card:hover{
+    box-shadow: 3px 6px 5px rgba(35,22,8,0.2), 6px 16px 24px var(--shadow-ink);
+    transform: rotate(0deg) translateY(-3px) scale(1.015);
+    z-index: 2;
+  }
+  .card.dragging{ opacity:.4; }
+  .card .type-tag{
+    display:inline-block; font-family:'Patrick Hand', cursive; font-size:13px;
+    color: var(--accent); margin-bottom:5px;
+    border-bottom: 1.5px dashed var(--accent);
+  }
+  .card .title{
+    font-family:'Caveat', cursive; font-weight:600;
+    font-size:21px; line-height:1.15; margin:0 0 5px; color:var(--ink);
+  }
+  .card .notes{
+    font-size:15px; color:var(--ink-soft); line-height:1.35; margin: 0 0 8px;
+    font-family:'Patrick Hand', cursive;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  .card .meta-row{ display:flex; align-items:center; justify-content:space-between; gap:6px; }
+  .due{
+    font-family:'Patrick Hand', cursive; font-size:14px;
+    color: var(--ink-soft);
+    text-decoration: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: var(--line);
+  }
+  .due.soon{ color: var(--ochre); text-decoration-color: var(--ochre); }
+  .due.overdue{ color: var(--overdue); font-weight:bold; text-decoration-color: var(--overdue); }
+  .priority{ display:flex; gap:3px; align-items:center; }
+  .priority i{ width:6px; height:6px; border-radius:50%; background: var(--line); display:inline-block; font-style:normal; box-shadow: 0 1px 1px rgba(0,0,0,0.15); }
+  .priority[data-p="baixa"] i:nth-child(1){ background: var(--accent); }
+  .priority[data-p="media"] i:nth-child(1),
+  .priority[data-p="media"] i:nth-child(2){ background: var(--ochre); }
+  .priority[data-p="alta"] i{ background: var(--overdue); }
+
+  /* Coluna de concluídos: bolinhas de papel amassado, jogadas no canto da mesa */
+  .column-done{
+    position: fixed;
+    right: 24px;
+    bottom: 20px;
+    width: 210px;
+    margin-top: 0;
+    max-height: none;
+    z-index: 6;
+  }
+  .column-done .column-head{
+    padding: 0 2px 4px;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  .column-done .column-head::before{ display:none; }
+  .column-done .column-head h2{ font-size:14px; opacity:.85; }
+  .column-done .column-count{ font-size:12px; }
+  .column-done .card-list{
+    display:flex; flex-wrap:wrap; justify-content:flex-end; align-content:flex-end;
+    gap: 2px; max-height: 230px; overflow-y:auto; overflow-x:hidden;
+    padding: 6px 4px 4px;
+  }
+  .column-done .card{
+    width: 58px; height: 56px; padding:0; flex: 0 0 auto;
+    border-radius: 46% 54% 53% 47% / 44% 41% 59% 56%;
+    background-image:
+      radial-gradient(circle at 30% 26%, rgba(255,255,255,0.8), transparent 42%),
+      radial-gradient(circle at 72% 76%, rgba(0,0,0,0.20), transparent 55%),
+      linear-gradient(125deg, transparent 28%, rgba(0,0,0,0.12) 31%, rgba(255,255,255,0.35) 34%, transparent 37%),
+      linear-gradient(35deg, transparent 54%, rgba(0,0,0,0.11) 57%, rgba(255,255,255,0.28) 60%, transparent 63%),
+      linear-gradient(165deg, transparent 66%, rgba(0,0,0,0.10) 69%, transparent 73%),
+      var(--paper);
+    box-shadow:
+      inset -3px -4px 6px rgba(0,0,0,0.16),
+      inset 3px 3px 5px rgba(255,255,255,0.55),
+      2px 5px 4px rgba(35,22,8,0.25),
+      4px 10px 14px var(--shadow-ink);
+    cursor:pointer;
+    transition: transform .15s ease;
+  }
+  .column-done .card > *{ display:none; }
+  .column-done .card-list .card:nth-of-type(5n+1){ transform: rotate(-9deg); width:54px; height:52px; }
+  .column-done .card-list .card:nth-of-type(5n+2){ transform: rotate(11deg); width:60px; height:58px; }
+  .column-done .card-list .card:nth-of-type(5n+3){ transform: rotate(-5deg); width:50px; height:54px; }
+  .column-done .card-list .card:nth-of-type(5n+4){ transform: rotate(15deg); width:58px; height:50px; }
+  .column-done .card-list .card:nth-of-type(5n+5){ transform: rotate(-13deg); width:56px; height:58px; }
+  .column-done .card-list .card:hover{
+    transform: rotate(0deg) scale(1.18);
+    z-index: 2;
+  }
+  .column-done .add-card-btn{
+    display:block; text-align:right; margin:2px 4px 0 0;
+    color: rgba(255,255,255,0.55); font-size:12px; border-bottom:none;
+  }
+  .column-done .add-card-btn:hover{ color:#fff; }
+
+  .add-card-btn{
+    margin: 0 8px 6px; padding: 6px 4px; text-align:left;
+    background:none; color: rgba(255,255,255,0.8); font-size:15px;
+    border: none; border-bottom: 1.5px dashed rgba(255,255,255,0.4);
+    font-family:'Patrick Hand', cursive; align-self:flex-start;
+  }
+  .add-card-btn:hover{ color:#fff; border-color: #fff; }
+
+  .add-column{
+    width: 220px; flex: 0 0 220px; align-self:flex-start; margin-top: 40px;
+    background: var(--paper); border: none; border-radius: 3px 10px 4px 9px;
+    padding: 14px 16px; color: var(--ink-soft); font-size:16px; text-align:left;
+    font-family:'Patrick Hand', cursive;
+    box-shadow: 2px 4px 3px rgba(35,22,8,0.18), 4px 10px 16px var(--shadow-ink);
+    transform: rotate(-1deg);
+  }
+  .add-column:hover{ color: var(--accent); }
+
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0; background: rgba(30,20,10,0.45);
+    display:none; align-items:center; justify-content:center; padding:20px; z-index:50;
+  }
+  .overlay.open{ display:flex; }
+  .modal{
+    background: var(--paper);
+    background-image: repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, var(--rule) 28px, var(--paper) 29px);
+    background-position: 0 70px;
+    border-radius: 2px 10px 3px 10px;
+    width: 100%; max-width: 440px;
+    padding: 26px 26px 22px 44px;
+    box-shadow: 6px 18px 40px rgba(20,10,0,0.4);
+    transform: rotate(-0.3deg);
+    position: relative;
+  }
+  .modal::before{
+    content:''; position:absolute; left:30px; top:0; bottom:0; width:1.5px; background: var(--margin);
+  }
+  .modal h3{ font-family:'Caveat', cursive; font-weight:700; margin:0 0 14px; font-size:28px; color:var(--ink); }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:13.5px; color:var(--ink-soft); margin-bottom:3px; font-family:'Patrick Hand', cursive; }
+  .field input, .field select, .field textarea{
+    width:100%; padding:5px 2px; border:none; border-bottom: 1.5px solid var(--line);
+    border-radius:0; background: transparent;
+    font-family:'Patrick Hand', cursive; font-size:16px; color: var(--ink);
+  }
+  .field textarea{ resize:vertical; min-height:56px; border: 1.5px solid var(--line); padding:6px 8px; }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline: none; border-color: var(--accent);
+  }
+  .modal-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:18px; gap:10px; }
+  .modal-actions .right{ display:flex; gap:8px; }
+  .btn-danger{ background:none; color: var(--overdue); font-size:14.5px; padding:8px 6px; font-family:'Patrick Hand', cursive; }
+  .btn-danger:hover{ text-decoration: underline; }
+
+  footer{
+    text-align:center; color: rgba(255,255,255,0.75); font-size:14.5px; font-family:'Patrick Hand', cursive;
+    padding: 10px 20px 34px; text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  }
+
+  @media (max-width: 640px){
+    header{ margin:16px; padding: 16px 18px 20px; }
+    main{ padding: 10px 14px 40px; }
+    .stats-bar{ padding: 8px 16px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="field-no">CADERNO Nº 01</span>
+    <h1>Caderno de Campo</h1>
+    <p>Quadro de atividades para pesquisa científica — do planejamento à submissão.</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn-ghost" id="exportBtn">Exportar dados</button>
+    <button class="btn-ghost" id="importBtn">Importar dados</button>
+    <input type="file" id="importFile" accept="application/json" style="display:none;">
+  </div>
+</header>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<main>
+  <div class="board" id="board"></div>
+</main>
+
+<footer>quadro salvo automaticamente neste navegador — dados não saem do seu dispositivo</footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="modalTitle">Nova atividade</h3>
+    <form id="cardForm">
+      <div class="field">
+        <label>Título</label>
+        <input type="text" id="f-title" required placeholder="ex.: Coletar amostras de sedimento — transecto 3">
+      </div>
+      <div class="field">
+        <label>Tipo de atividade</label>
+        <select id="f-type">
+          <option>Coleta de campo</option>
+          <option>Experimento</option>
+          <option>Análise de dados</option>
+          <option>Redação</option>
+          <option>Submissão</option>
+          <option>Revisão por pares</option>
+          <option>Reunião / Orientação</option>
+          <option>Outro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Prazo</label>
+        <input type="date" id="f-due">
+      </div>
+      <div class="field">
+        <label>Prioridade</label>
+        <select id="f-priority">
+          <option value="baixa">Baixa</option>
+          <option value="media" selected>Média</option>
+          <option value="alta">Alta</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Notas</label>
+        <textarea id="f-notes" placeholder="detalhes, colaboradores, referências..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-danger" id="deleteCardBtn" style="display:none;">Excluir atividade</button>
+        <div class="right">
+          <button type="button" class="btn-ghost" id="cancelBtn">Cancelar</button>
+          <button type="submit" class="btn-primary">Salvar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'caderno-de-campo-board-v1';
+
+  const defaultState = {
+    columns: [
+      { id: 'c1', title: 'Ideias & Planejamento', cardIds: ['k1','k2'] },
+      { id: 'c2', title: 'Em execução', cardIds: ['k3'] },
+      { id: 'c3', title: 'Análise & Redação', cardIds: [] },
+      { id: 'c4', title: 'Submetido / Em revisão', cardIds: [] },
+      { id: 'c5', title: 'Concluído', cardIds: [] },
+    ],
+    cards: {
+      k1: { id:'k1', title:'Definir hipóteses do experimento de temperatura', type:'Experimento', due:'', priority:'media', notes:'Revisar literatura sobre efeito de 28°C vs 30°C antes de desenhar os tratamentos.' },
+      k2: { id:'k2', title:'Planejar campanha de coleta na sub-bacia', type:'Coleta de campo', due:'', priority:'baixa', notes:'' },
+      k3: { id:'k3', title:'Rodar triplicatas a 28°C', type:'Experimento', due:'', priority:'alta', notes:'Acompanhar por ~12 dias antes de elevar para 30°C.' },
+    }
+  };
+
+  let state = loadState();
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(e){ console.warn('Falha ao ler dados salvos', e); }
+    return JSON.parse(JSON.stringify(defaultState));
+  }
+
+  function saveState(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch(e){ console.warn('Falha ao salvar', e); }
+  }
+
+  function uid(prefix){ return prefix + Math.random().toString(36).slice(2,9); }
+
+  // ---------- Rendering ----------
+  const board = document.getElementById('board');
+  const statsBar = document.getElementById('statsBar');
+
+  function daysUntil(dateStr){
+    if(!dateStr) return null;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const due = new Date(dateStr + 'T00:00:00');
+    return Math.round((due - today) / 86400000);
+  }
+
+  function dueBadge(dateStr){
+    if(!dateStr) return '';
+    const d = daysUntil(dateStr);
+    const label = new Date(dateStr+'T00:00:00').toLocaleDateString('pt-BR', {day:'2-digit', month:'short'});
+    let cls = '';
+    if(d < 0) cls = 'overdue';
+    else if(d <= 5) cls = 'soon';
+    return `<span class="due ${cls}">${label}</span>`;
+  }
+
+  function render(){
+    board.innerHTML = '';
+    let total = 0, overdue = 0, dueSoon = 0;
+
+    state.columns.forEach(col => {
+      const colEl = document.createElement('div');
+      const isDone = /conclu|finaliz/i.test(col.title);
+      colEl.className = 'column' + (isDone ? ' column-done' : '');
+      colEl.dataset.colId = col.id;
+
+      colEl.innerHTML = `
+        <div class="column-head">
+          <h2 contenteditable="true" data-col-title="${col.id}">${escapeHtml(col.title)}</h2>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span class="column-count">${col.cardIds.length}</span>
+            <button class="column-del" title="Remover coluna" data-del-col="${col.id}">×</button>
+          </div>
+        </div>
+        <div class="card-list" data-col-id="${col.id}"></div>
+        <button class="add-card-btn" data-add-col="${col.id}">+ nova atividade</button>
+      `;
+
+      const list = colEl.querySelector('.card-list');
+      col.cardIds.forEach(cid => {
+        const card = state.cards[cid];
+        if(!card) return;
+        total++;
+        if(card.due){
+          const d = daysUntil(card.due);
+          if(d < 0) overdue++; else if(d <= 5) dueSoon++;
+        }
+        const cardEl = document.createElement('div');
+        cardEl.className = 'card';
+        cardEl.draggable = true;
+        cardEl.dataset.cardId = card.id;
+        if(isDone) cardEl.title = card.title;
+        cardEl.innerHTML = `
+          <span class="type-tag">${escapeHtml(card.type)}</span>
+          <p class="title">${escapeHtml(card.title)}</p>
+          ${card.notes ? `<p class="notes">${escapeHtml(card.notes)}</p>` : ''}
+          <div class="meta-row">
+            <span class="priority" data-p="${card.priority}"><i></i><i></i><i></i></span>
+            ${dueBadge(card.due)}
+          </div>
+        `;
+        cardEl.addEventListener('click', () => openCardModal(card.id, col.id));
+        cardEl.addEventListener('dragstart', e => {
+          cardEl.classList.add('dragging');
+          e.dataTransfer.setData('text/plain', card.id);
+        });
+        cardEl.addEventListener('dragend', () => cardEl.classList.remove('dragging'));
+        list.appendChild(cardEl);
+      });
+
+      list.addEventListener('dragover', e => { e.preventDefault(); colEl.classList.add('drag-over'); });
+      list.addEventListener('dragleave', () => colEl.classList.remove('drag-over'));
+      list.addEventListener('drop', e => {
+        e.preventDefault();
+        colEl.classList.remove('drag-over');
+        const cardId = e.dataTransfer.getData('text/plain');
+        moveCard(cardId, col.id, e.clientY, list);
+      });
+
+      colEl.querySelector('[data-add-col]').addEventListener('click', () => openCardModal(null, col.id));
+      colEl.querySelector('[data-del-col]').addEventListener('click', () => {
+        if(col.cardIds.length && !confirm('Esta coluna tem atividades. Remover mesmo assim?')) return;
+        state.columns = state.columns.filter(c => c.id !== col.id);
+        col.cardIds.forEach(cid => delete state.cards[cid]);
+        saveState(); render();
+      });
+      const titleEl = colEl.querySelector('[data-col-title]');
+      titleEl.addEventListener('blur', () => {
+        col.title = titleEl.textContent.trim() || col.title;
+        saveState();
+      });
+      titleEl.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); titleEl.blur(); }});
+
+      board.appendChild(colEl);
+    });
+
+    const addColBtn = document.createElement('button');
+    addColBtn.className = 'add-column';
+    addColBtn.textContent = '+ nova coluna';
+    addColBtn.addEventListener('click', () => {
+      const title = prompt('Nome da nova coluna:', 'Nova etapa');
+      if(!title) return;
+      state.columns.push({ id: uid('c'), title, cardIds: [] });
+      saveState(); render();
+    });
+    board.appendChild(addColBtn);
+
+    statsBar.innerHTML = `
+      <span><b>${total}</b> atividades no quadro</span>
+      <span class="${overdue ? 'flag' : ''}"><b>${overdue}</b> atrasadas</span>
+      <span><b>${dueSoon}</b> com prazo em até 5 dias</span>
+    `;
+  }
+
+  function moveCard(cardId, targetColId, clientY, listEl){
+    // remove from old column
+    let fromCol;
+    state.columns.forEach(c => {
+      const idx = c.cardIds.indexOf(cardId);
+      if(idx > -1){ fromCol = c; c.cardIds.splice(idx,1); }
+    });
+    const targetCol = state.columns.find(c => c.id === targetColId);
+    if(!targetCol) return;
+
+    // determine insertion index based on mouse position
+    const cardEls = [...listEl.querySelectorAll('.card:not(.dragging)')];
+    let insertIndex = targetCol.cardIds.length;
+    for(let i=0;i<cardEls.length;i++){
+      const rect = cardEls[i].getBoundingClientRect();
+      if(clientY < rect.top + rect.height/2){ insertIndex = i; break; }
+    }
+    targetCol.cardIds.splice(insertIndex, 0, cardId);
+    saveState();
+    render();
+  }
+
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str || '';
+    return d.innerHTML;
+  }
+
+  // ---------- Modal ----------
+  const overlay = document.getElementById('overlay');
+  const form = document.getElementById('cardForm');
+  const modalTitle = document.getElementById('modalTitle');
+  const deleteBtn = document.getElementById('deleteCardBtn');
+  let editingCardId = null;
+  let targetColId = null;
+
+  function openCardModal(cardId, colId){
+    editingCardId = cardId;
+    targetColId = colId;
+    if(cardId){
+      const c = state.cards[cardId];
+      modalTitle.textContent = 'Editar atividade';
+      document.getElementById('f-title').value = c.title;
+      document.getElementById('f-type').value = c.type;
+      document.getElementById('f-due').value = c.due || '';
+      document.getElementById('f-priority').value = c.priority;
+      document.getElementById('f-notes').value = c.notes || '';
+      deleteBtn.style.display = 'inline-block';
+    } else {
+      modalTitle.textContent = 'Nova atividade';
+      form.reset();
+      document.getElementById('f-priority').value = 'media';
+      deleteBtn.style.display = 'none';
+    }
+    overlay.classList.add('open');
+    document.getElementById('f-title').focus();
+  }
+
+  function closeModal(){
+    overlay.classList.remove('open');
+    editingCardId = null; targetColId = null;
+  }
+
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if(e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', e => { if(e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const data = {
+      title: document.getElementById('f-title').value.trim(),
+      type: document.getElementById('f-type').value,
+      due: document.getElementById('f-due').value,
+      priority: document.getElementById('f-priority').value,
+      notes: document.getElementById('f-notes').value.trim(),
+    };
+    if(!data.title) return;
+
+    if(editingCardId){
+      state.cards[editingCardId] = { id: editingCardId, ...data };
+    } else {
+      const id = uid('k');
+      state.cards[id] = { id, ...data };
+      const col = state.columns.find(c => c.id === targetColId);
+      col.cardIds.push(id);
+    }
+    saveState();
+    closeModal();
+    render();
+  });
+
+  deleteBtn.addEventListener('click', () => {
+    if(!editingCardId) return;
+    if(!confirm('Excluir esta atividade?')) return;
+    state.columns.forEach(c => {
+      const idx = c.cardIds.indexOf(editingCardId);
+      if(idx > -1) c.cardIds.splice(idx,1);
+    });
+    delete state.cards[editingCardId];
+    saveState();
+    closeModal();
+    render();
+  });
+
+  // ---------- Import / Export ----------
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'caderno-de-campo-backup.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  const importFile = document.getElementById('importFile');
+  document.getElementById('importBtn').addEventListener('click', () => importFile.click());
+  importFile.addEventListener('change', () => {
+    const file = importFile.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const parsed = JSON.parse(reader.result);
+        if(parsed.columns && parsed.cards){
+          state = parsed;
+          saveState();
+          render();
+        } else {
+          alert('Arquivo inválido.');
+        }
+      }catch(e){
+        alert('Não foi possível ler o arquivo.');
+      }
+    };
+    reader.readAsText(file);
+    importFile.value = '';
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
